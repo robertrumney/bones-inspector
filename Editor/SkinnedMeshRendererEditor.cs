@@ -12,20 +12,20 @@ public class SkinnedMeshRendererEditor : Editor
     private void OnEnable()
     {
         bonesList = new ReorderableList(
-            serializedObject, 
-            serializedObject.FindProperty("m_Bones"), 
+            serializedObject,
+            serializedObject.FindProperty("m_Bones"),
             true, true, true, true);
 
-        bonesList.drawHeaderCallback = (Rect rect) => 
+        bonesList.drawHeaderCallback = (Rect rect) =>
         {
             EditorGUI.LabelField(rect, "Bones");
         };
 
-        bonesList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => 
+        bonesList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
         {
             SerializedProperty element = bonesList.serializedProperty.GetArrayElementAtIndex(index);
             rect.y += 2;
-            EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), 
+            EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
                 element, GUIContent.none);
         };
     }
@@ -35,11 +35,16 @@ public class SkinnedMeshRendererEditor : Editor
         // Draw the default inspector
         DrawDefaultInspector();
 
+        serializedObject.Update();
+
         // Draw the reorderable list
         bonesList.DoLayoutList();
 
+        serializedObject.ApplyModifiedProperties();
+
         // Copy & Paste buttons
         EditorGUILayout.BeginHorizontal();
+
         if (GUILayout.Button("Copy Bones"))
         {
             SkinnedMeshRenderer skinnedMesh = (SkinnedMeshRenderer)target;
@@ -51,6 +56,7 @@ public class SkinnedMeshRendererEditor : Editor
             SkinnedMeshRenderer skinnedMesh = (SkinnedMeshRenderer)target;
             skinnedMesh.bones = copiedBones.ToArray();
         }
+
         EditorGUILayout.EndHorizontal();
     }
 }
